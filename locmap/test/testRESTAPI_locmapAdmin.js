@@ -5,6 +5,7 @@ See LICENSE for details
 
 'use strict';
 
+var logger = require('log-driver').logger;
 var helpers = require('../../test_helpers/test_helpers');
 var lmHelpers = require('../test_helpers/locMapHelpers');
 var LocMapCommon = require('../lib/locMapCommon');
@@ -40,7 +41,7 @@ module.exports = {
             var report = {'osType': osType, osVersion: 'foobar', lokkiVersion: '3.0.0', reportTitle: 'title', reportData: 'data'};
             var authWithData = JSON.parse(JSON.stringify(auth));
             authWithData.data = report;
-            console.log('User created. posting report.');
+            logger.trace('User created. posting report.');
             lmHelpers.api.post(test, '/v1/crashReport/' + reply.id, authWithData, function() {
                 var now = new Date();
                 var year = now.getFullYear();

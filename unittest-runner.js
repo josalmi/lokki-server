@@ -5,6 +5,7 @@ See LICENSE for details
 
 'use strict';
 
+require('log-driver')({ level: 'warn' });
 var reporter = require('nodeunit').reporters.default;
 
 global.lokkiUnitTestingMode = {};// just inform everyone that we are in "run unittests" mode

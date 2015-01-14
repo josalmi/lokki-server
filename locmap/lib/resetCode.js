@@ -12,6 +12,8 @@ See LICENSE for details
  - 400: Generic error. Most probably DB related.
  - 404: Reset code not found.
  */
+
+var logger = require('log-driver').logger;
 var db = require('../../lib/db');
 var LocMapConfig = require('./locMapConfig');
 var LocMapCommon = require('./locMapCommon');
@@ -51,7 +53,7 @@ var ResetCode = function() {
         db.setex(modelPrefix + resetCode, LocMapConfig.resetCodeTimeout, serializedData, function(error, result) {
             if (error) {
                 result = 400;
-                console.log('Error storing user ' + userId + ' reset code');
+                logger.error('Error storing user ' + userId + ' reset code');
             } else {
                 result = resetCode;
             }

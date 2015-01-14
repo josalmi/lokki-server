@@ -9,9 +9,11 @@ See LICENSE for details
  * Email helper library for Locmap
  */
 
+var logger = require('log-driver').logger;
 var LocMapCommon = require('./locMapCommon');
 var locMapCommon = new LocMapCommon();
 
+// TODO Why hardcode this here?
 var noReplyAddress = 'no-reply@example.com';
 var I18N = require('../../lib/i18n');
 var i18n = new I18N();
@@ -21,9 +23,9 @@ var LocMapEmail = function() {
 
     this._sendEmail = function(emailObj, callback) {
         var inProduction = process.env.PORT || false;
-        console.log('sendEmail, production: ' + inProduction);
+        logger.trace('sendEmail, production: ' + inProduction);
         if (inProduction) {
-            console.log('In production, using sendgrid to send email.');
+            logger.trace('In production, using sendgrid to send email.');
             var sendgrid = require('sendgrid')(
                process.env.SENDGRID_USERNAME,
                process.env.SENDGRID_PASSWORD
@@ -31,22 +33,21 @@ var LocMapEmail = function() {
             var email = new sendgrid.Email(emailObj);
             sendgrid.send(email, function(err) {
                 if (err) {
-                    console.log('Error sending signup email to ' + emailObj.to + ' : ' + err);
-                    console.error(err);
+                    logger.error('Error sending signup email to ' + emailObj.to + ' : ' + err);
+                    logger.error(err);
                     callback(false);
                 } else {
                     callback(true);
                 }
             });
         } else {
-            console.log('Unittesting, saving email locally.');
+            logger.trace('Unittesting, saving email locally.');
             this.emails.push(emailObj);
             callback(true);
         }
     };
 
     this.sendSignupMail = function(targetEmail, langCode, callback) {
-        var that = this;
         var lang = locMapCommon.verifyLangCode(langCode);
         var subject = i18n.getLocalizedString(lang, 'signup.userEmailSubject');
         var messageText = i18n.getLocalizedString(lang, 'signup.userEmailText');
@@ -57,24 +58,22 @@ var LocMapEmail = function() {
             subject: subject,
             text: messageText
         };
-        that._sendEmail(emailObj, callback);
+        this._sendEmail(emailObj, callback);
     };
 
     this.sendInviteEmail = function(targetEmail, inviterEmail, langCode, callback) {
-        var that = this;
-        // console.log("sendInviteEmail with " + targetEmail + " " + inviterEmail + " " + langCode);
+        logger.trace('SendInviteEmail with ' + targetEmail + ' ' + inviterEmail + ' ' + langCode);
         var lang = locMapCommon.verifyLangCode(langCode);
         var subject = i18n.getLocalizedString(lang, 'invite.userInvitedToLokkiEmailSubject');
         var messageText = i18n.getLocalizedString(lang, 'invite.userInvitedToLokkiEmailText', 'targetUser', targetEmail, 'senderUser', inviterEmail);
-        // var finalText = LocMapCommon.messageTexts.inviteEmailText1 + targetEmail +
-        //    LocMapCommon.messageTexts.inviteEmailText2 + inviterEmail + LocMapCommon.messageTexts.inviteEmailText3;
+
         var emailObj = {
             to: targetEmail,
             from: noReplyAddress,
             subject: subject,
             text: messageText
         };
-        that._sendEmail(emailObj, callback);
+        this._sendEmail(emailObj, callback);
     };
 
     /*
@@ -85,17 +84,16 @@ var LocMapEmail = function() {
     */
 
     this.sendResetEmail = function(targetEmail, resetLink, langCode, callback) {
-        var that = this;
         var lang = locMapCommon.verifyLangCode(langCode);
         var subject = i18n.getLocalizedString(lang, 'reset.emailSubject');
         var messageText = i18n.getLocalizedString(lang, 'reset.emailText', 'resetLink', resetLink);
-         var emailObj = {
+        var emailObj = {
             to: targetEmail,
             from: noReplyAddress,
             subject: subject,
             text: messageText
-         };
-        that._sendEmail(emailObj, callback);
+        };
+        this._sendEmail(emailObj, callback);
     };
 };
 

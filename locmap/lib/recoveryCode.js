@@ -15,6 +15,8 @@ See LICENSE for details
  - 404: Confirmation code not found
 
  */
+
+var logger = require('log-driver').logger;
 var db = require('../../lib/db');
 var LocMapConfig = require('./locMapConfig');
 
@@ -55,7 +57,7 @@ var RecoveryCode = function(userId) {
         db.setex(modelPrefix + this.data.userId, LocMapConfig.recoveryCodeTimeout, serializedData, function(error, result) {
             if (error) {
                 result = 400;
-                console.log('Error storing user ' + that.data.userId + ' recovery code');
+                logger.error('Error storing user ' + that.data.userId + ' recovery code');
             } else {
                 that.exists = true;
                 result = that.data.recoveryCode;

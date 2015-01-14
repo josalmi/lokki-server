@@ -5,6 +5,8 @@ See LICENSE for details
 
 'use strict';
 
+var logger = require('log-driver').logger;
+
 var testServerProcess = {};
 
 var testPlaceTemplate = {
@@ -186,20 +188,20 @@ module.exports = {
             }
             var str = data.toString();
             var lines = str.split(/(\r?\n)/g);
-            console.log('Server log: ' + lines.join(''));
+            logger.trace('Server log: ' + lines.join(''));
         });
 
         testServerProcess.on('close', function(code) {
             if (!serverStarted) {
                 test.done();
             }
-            console.log('process exit code ' + code);
+            logger.trace('process exit code ' + code);
         });
     },
 
     // execute this as last test to stop server started using startServer
     stopServer: function(test) {
-        console.log('Stopping server');
+        logger.trace('Stopping server');
         testServerProcess.kill();
         testServerProcess = {};
         test.done();
@@ -314,7 +316,7 @@ module.exports = {
         function removeAvatar(user) {
             awss3.del('avatar/' + user).on('response', function(res) {
                 if (res.statusCode !== 204 && res.statusCode !== 404) {
-                    console.log('S3 removal of avatar/testUserId failed with status ' + res.statusCode);
+                    logger.trace('S3 removal of avatar/testUserId failed with status ' + res.statusCode);
                 }
                 counter--;
                 if (counter < 1) {

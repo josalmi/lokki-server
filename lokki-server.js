@@ -6,8 +6,9 @@ See LICENSE for details
 'use strict';
 
 // lokki-server main file
-// Express application
+var logger = require('log-driver')({ level: 'info' });
 
+// Express application
 var express = require('express');
 
 var app = express();
@@ -49,8 +50,8 @@ if (inProduction) {
     // do not allow production server to crash
     process.on('uncaughtException', function(err) {
         // handle the error safely
-        console.error('uncaughtException:', err);
-        console.error(err.stack);
+        logger.error('uncaughtException:', err);
+        logger.error(err.stack);
     });
 
 }
@@ -88,7 +89,7 @@ if (require.main === module) {
         port = +process.argv[2];
     }
     app.listen(port, function() {
-        console.log('Lokki-Server listening on ' + port + '\n');
+        logger.info('Lokki-Server listening on ' + port);
     });
 
     // Not run on local server, interferes with unit tests.

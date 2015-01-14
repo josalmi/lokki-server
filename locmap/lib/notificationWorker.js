@@ -10,6 +10,7 @@ See LICENSE for details
     and checks if user needs to be polled with a visible notification.
  */
 
+var logger = require('log-driver').logger;
 var db = require('../../lib/db');
 var LocMapConfig = require('./locMapConfig');
 var PendingNotifications = require('./pendingNotifications');
@@ -39,7 +40,6 @@ var checkNotifications = function() {
                 // Check if user has received a visible notification recently.
                 if (typeof user.data.lastVisibleNotification === 'number') {
                     var now = Date.now();
-                    // console.log("Comparison: " + (user.data.lastVisibleNotification + LocMapConfig.visibleNotificationLimit*1000) + " now: " + now);
 
                     if (user.data.lastVisibleNotification + LocMapConfig.visibleNotificationLimit * 1000 >= now) {
                         recentVisibleNotification = true;
@@ -59,7 +59,7 @@ var checkNotifications = function() {
                 // Send notification if users location has not updated recently, or they have not been sent a notification rencently.
                 if (!recentLocationUpdate && !recentVisibleNotification && hasCorrectDevice && isVisible) {
                     user.sendLocalizedPushNotification('notify.friendLocationRequestLokkiStart', function() {
-                        console.log('Visible notification sent to user ' + user.data.userId);
+                        logger.trace('Visible notification sent to user ' + user.data.userId);
                         callback(true);
                     });
                 } else {
@@ -91,7 +91,6 @@ var checkNotifications = function() {
         // Acquire lock for the check. This prevents multiple instances from doing the upkeep simultaneously.
         db.set(lockDBKey, 'anyvalue', 'NX', 'EX', LocMapConfig.notificationCheckPollingInterval, function(error, result) {
             if (result === 'OK') {
-                // console.log("DEBUG: CHECKNOTIF: Acquired upkeep lock.");
                 pendingNotifications.getTimedOutNotifications(LocMapConfig.pendingNotificationTimeout, function(notifications) {
                     if (notifications.length > 0) {
                         var cleanNotifications = checkNotify._cleanNotifications(notifications);
@@ -104,7 +103,7 @@ var checkNotifications = function() {
                             }
                             count++;
                             if (count >= cleanNotifications.length) {
-                                console.log('CheckNotifications sent ' + notifyCount + ' visible notifications. Checked ' + cleanNotifications.length + ' pending notifications. Dropped ' + (notifications.length - cleanNotifications.length) + ' duplicates.');
+                                logger.info('CheckNotifications sent ' + notifyCount + ' visible notifications. Checked ' + cleanNotifications.length + ' pending notifications. Dropped ' + (notifications.length - cleanNotifications.length) + ' duplicates.');
                                 if (callback) {
                                     callback(notifyCount);
                                 }

@@ -1,30 +1,28 @@
 {
-    "name": "lokki-server",
-    "version": "0.1.1",
-
-    "dependencies": {
-        "express": "3.x",
-        "redis": "x",
-        "easynexmo": "x",
-        "nodetime": "x",
-        "apn": "x",
-        "gcm": "x",
-        "mpns": "x",
-        "knox": "0.8.x",
-        "newrelic" : "x",
-        "sendgrid": "0.4.x",
-        "validator": "2.0.x",
-        "node-uuid": "1.4.x",
-        "memwatch": "x"
-    },
-
-    "devDependencies": {
-        "nodeunit": "0.9.x",
-        "nodeunit-httpclient": "0.2.x"
-    },
-
-    "engines": {
-        "node": "0.10.x",
-        "npm": "1.2.x"
-    }
+  "name": "lokki-server",
+  "version": "0.1.1",
+  "dependencies": {
+    "apn": "x",
+    "easynexmo": "x",
+    "express": "3.x",
+    "gcm": "x",
+    "knox": "0.8.x",
+    "log-driver": "^1.2.5",
+    "memwatch": "x",
+    "mpns": "x",
+    "newrelic": "x",
+    "node-uuid": "1.4.x",
+    "nodetime": "x",
+    "redis": "x",
+    "sendgrid": "0.4.x",
+    "validator": "2.0.x"
+  },
+  "devDependencies": {
+    "nodeunit": "0.9.x",
+    "nodeunit-httpclient": "0.2.x"
+  },
+  "engines": {
+    "node": "0.10.x",
+    "npm": "1.2.x"
+  }
 }
